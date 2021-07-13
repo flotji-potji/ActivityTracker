@@ -87,16 +87,11 @@ def store_sensor_data(data, label):
             print(label, file=outfile)
 
 
-def count(frequency):
-    for i in range(frequency):
-        sleep(1 / frequency)
-        yield i
-
-
-def collect_data(frequency=100):
+def collect_data(time=10,frequency=100):
     res = []
-    for _ in count(frequency):
+    for _ in range(frequency * time):
         res.append(get_sensor_data())
+        sleep(1/frequency)
     return res
 
 
