@@ -1,19 +1,25 @@
 #!/usr/bin/python
 import smbus2 as smbus
 import math
+from gpiozero import Button
 
 # Register
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
+i2c_address = 0x68
+bus = smbus.SMBus(1)
+idle_button = Button(14)
+walking_button = Button(15)
+running_button = Button(18)
 
 
 def read_byte(reg):
-    return bus.read_byte_data(address, reg)
+    return bus.read_byte_data(i2c_address, reg)
 
 
 def read_word(reg):
-    h = bus.read_byte_data(address, reg)
-    l = bus.read_byte_data(address, reg + 1)
+    h = bus.read_byte_data(i2c_address, reg)
+    l = bus.read_byte_data(i2c_address, reg + 1)
     value = (h << 8) + l
     return value
 
@@ -40,40 +46,31 @@ def get_x_rotation(x, y, z):
     return math.degrees(radians)
 
 
-bus = smbus.SMBus(1)  # bus = smbus.SMBus(0) fuer Revision 1
-address = 0x68  # via i2cdetect
+def get_sensor_data():
+    gyro_x = read_word_2c(0x43)
+    gyro_y = read_word_2c(0x45)
+    gyro_z = read_word_2c(0x47)
+    gyro_x_scaled = gyro_x / 131
+    gyro_y_scaled = gyro_y / 131
+    gyro_z_scaled = gyro_z / 131
 
-# Aktivieren, um das Modul ansprechen zu koennen
-bus.write_byte_data(address, power_mgmt_1, 0)
+    acc_x = read_word_2c(0x3b) # acc = acceleration
+    acc_y = read_word_2c(0x3d)
+    acc_z = read_word_2c(0x3f)
+    acc_x_scaled = acc_x / 16384.0
+    acc_y_scaled = acc_y / 16384.0
+    acc_z_scaled = acc_z / 16384.0
 
-print("Gyroskop")
-print("--------")
+    rot_x = get_x_rotation(acc_x_scaled, acc_y_scaled, acc_z_scaled)
+    rot_y = get_y_rotation(acc_x_scaled, acc_y_scaled, acc_z_scaled)
 
-gyroskop_xout = read_word_2c(0x43)
-gyroskop_yout = read_word_2c(0x45)
-gyroskop_zout = read_word_2c(0x47)
 
-print("gyroskop_xout: ", ("%5d" % gyroskop_xout), " skaliert: ", (gyroskop_xout / 131))
-print("gyroskop_yout: ", ("%5d" % gyroskop_yout), " skaliert: ", (gyroskop_yout / 131))
-print("gyroskop_zout: ", ("%5d" % gyroskop_zout), " skaliert: ", (gyroskop_zout / 131))
 
-print()
-print("Beschleunigungssensor")
-print("---------------------")
 
-beschleunigung_xout = read_word_2c(0x3b)
-beschleunigung_yout = read_word_2c(0x3d)
-beschleunigung_zout = read_word_2c(0x3f)
+def main():
+    # activate module to communicate with it
+    bus.write_byte_data(i2c_address, power_mgmt_1, 0)
 
-beschleunigung_xout_skaliert = beschleunigung_xout / 16384.0
-beschleunigung_yout_skaliert = beschleunigung_yout / 16384.0
-beschleunigung_zout_skaliert = beschleunigung_zout / 16384.0
 
-print("beschleunigung_xout: ", ("%6d" % beschleunigung_xout), " skaliert: ", beschleunigung_xout_skaliert)
-print("beschleunigung_yout: ", ("%6d" % beschleunigung_yout), " skaliert: ", beschleunigung_yout_skaliert)
-print("beschleunigung_zout: ", ("%6d" % beschleunigung_zout), " skaliert: ", beschleunigung_zout_skaliert)
-
-print("X Rotation: ",
-      get_x_rotation(beschleunigung_xout_skaliert, beschleunigung_yout_skaliert, beschleunigung_zout_skaliert))
-print("Y Rotation: ",
-      get_y_rotation(beschleunigung_xout_skaliert, beschleunigung_yout_skaliert, beschleunigung_zout_skaliert))
+if __name__ == '__main__':
+    main()
