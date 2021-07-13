@@ -3,6 +3,7 @@ import smbus2 as smbus
 import math
 from gpiozero import Button, LED
 from time import sleep
+import os
 
 # Register
 power_mgmt_1 = 0x6b
@@ -82,7 +83,7 @@ def store_sensor_data(data, label):
     with open('data/sensor_data.csv', 'w') as outfile:
         for row in data:
             for column in row:
-                print(f'{column},', file=outfile)
+                print(f'{column},', file=outfile, end='')
             print(label, file=outfile)
 
 
@@ -114,6 +115,11 @@ def running_pressed():
 def main():
     # activate module to communicate with it
     bus.write_byte_data(i2c_address, power_mgmt_1, 0)
+
+    new_path = r'data'
+    if not os.path.exists(new_path):
+        os.makedirs(new_path)
+
     while True:
         if idle_button.is_pressed:
             idle_pressed()
