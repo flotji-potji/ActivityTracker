@@ -80,18 +80,24 @@ def get_sensor_data():
 
 
 def store_sensor_data(data, label):
-    with open('data/sensor_data.csv', 'w') as outfile:
+    print('storing data...')
+    with open('/home/pi/ActivityTracker/data/sensor_data.csv', 'w') as outfile:
+        print('opening file?')
         for row in data:
             for column in row:
                 print(f'{column},', file=outfile, end='')
             print(label, file=outfile)
+    print('closed file?')
 
 
 def collect_data(time=10,frequency=100):
     res = []
-    for _ in range(frequency * time):
-        res.append(get_sensor_data())
-        sleep(1/frequency)
+    print('collecting data...')
+    for _ in range(time):
+        for _ in range(frequency):
+            res.append(get_sensor_data())
+            sleep(1/frequency)
+    print('finished collecting data')
     return res
 
 
