@@ -143,7 +143,7 @@ def main():
 
     startup_led_blink()
 
-    new_path = r'data'
+    new_path = r'/home/pi/ActivityTracker/data'
     if not os.path.exists(new_path):
         os.makedirs(new_path)
 
