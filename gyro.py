@@ -1,16 +1,27 @@
 #!/usr/bin/python
 import smbus2 as smbus
 import math
-from gpiozero import Button
+from gpiozero import Button, LED
+from time import sleep
 
 # Register
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
 i2c_address = 0x68
 bus = smbus.SMBus(1)
+
+# Buttons and LEDs
 idle_button = Button(14)
 walking_button = Button(15)
 running_button = Button(18)
+idle_led = LED(22)
+walking_led = LED(27)
+running_led = LED(17)
+
+# target vector labels
+IDLE_STATE_LABEL = '0'
+WALKING_STATE_LABEL = '1'
+RUNNING_STATE_LABEL = '2'
 
 
 def read_byte(reg):
@@ -54,7 +65,7 @@ def get_sensor_data():
     gyro_y_scaled = gyro_y / 131
     gyro_z_scaled = gyro_z / 131
 
-    acc_x = read_word_2c(0x3b) # acc = acceleration
+    acc_x = read_word_2c(0x3b)  # acc = acceleration
     acc_y = read_word_2c(0x3d)
     acc_z = read_word_2c(0x3f)
     acc_x_scaled = acc_x / 16384.0
@@ -64,12 +75,55 @@ def get_sensor_data():
     rot_x = get_x_rotation(acc_x_scaled, acc_y_scaled, acc_z_scaled)
     rot_y = get_y_rotation(acc_x_scaled, acc_y_scaled, acc_z_scaled)
 
+    return (gyro_x_scaled, gyro_y_scaled, gyro_z_scaled, acc_x_scaled, acc_y_scaled, acc_z_scaled, rot_x, rot_y)
 
+
+def store_sensor_data(data, label):
+    with open('data/sensor_data.csv', 'w') as outfile:
+        for row in data:
+            for column in row:
+                print(f'{column},', file=outfile)
+            print(label, file=outfile)
+
+
+def count(frequency):
+    for i in range(frequency):
+        sleep(1 / frequency)
+        yield i
+
+
+def collect_data(frequency=100):
+    res = []
+    for _ in count(frequency):
+        res.append(get_sensor_data())
+    return res
+
+
+def idle_pressed():
+    store_sensor_data(collect_data(), IDLE_STATE_LABEL)
+
+
+def walking_pressed():
+    store_sensor_data(collect_data(), WALKING_STATE_LABEL)
+
+
+def running_pressed():
+    store_sensor_data(collect_data(), RUNNING_STATE_LABEL)
 
 
 def main():
     # activate module to communicate with it
     bus.write_byte_data(i2c_address, power_mgmt_1, 0)
+    while True:
+        if idle_button.is_pressed:
+            idle_pressed()
+            break
+        elif walking_button.is_pressed:
+            walking_pressed()
+            break
+        elif running_button.is_pressed:
+            running_pressed()
+            break
 
 
 if __name__ == '__main__':
