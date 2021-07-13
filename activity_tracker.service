@@ -3,7 +3,7 @@ Description=Simple Activity Tracker Service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/gyro.py
+ExecStart=/usr/bin/python3 /usr/local/bin/gyro.py
 
 [Install]
 WantedBy=multi-user.target
