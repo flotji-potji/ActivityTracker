@@ -96,20 +96,52 @@ def collect_data(time=10,frequency=100):
 
 
 def idle_pressed():
+    idle_led.on()
+    sleep(0.5)
+    idle_led.off()
     store_sensor_data(collect_data(), IDLE_STATE_LABEL)
 
 
 def walking_pressed():
+    walking_led.on()
+    sleep(0.5)
+    walking_led.off()
     store_sensor_data(collect_data(), WALKING_STATE_LABEL)
 
 
 def running_pressed():
+    running_led.on()
+    sleep(0.5)
+    running_led.off()
     store_sensor_data(collect_data(), RUNNING_STATE_LABEL)
 
+def startup_led_blink():
+    idle_led.on()
+    sleep(0.5)
+    idle_led.off()
+    walking_led.on()
+    sleep(0.5)
+    walking_led.off()
+    running_led.on()
+    sleep(0.5)
+    running_led.off()
+
+def end_of_operation_led_blink():
+    running_led.on()
+    sleep(0.5)
+    running_led.off()
+    walking_led.on()
+    sleep(0.5)
+    walking_led.off()
+    idle_led.on()
+    sleep(0.5)
+    idle_led.off()
 
 def main():
     # activate module to communicate with it
     bus.write_byte_data(i2c_address, power_mgmt_1, 0)
+
+    startup_led_blink()
 
     new_path = r'data'
     if not os.path.exists(new_path):
@@ -118,13 +150,13 @@ def main():
     while True:
         if idle_button.is_pressed:
             idle_pressed()
-            break
+            end_of_operation_led_blink()
         elif walking_button.is_pressed:
             walking_pressed()
-            break
+            end_of_operation_led_blink()
         elif running_button.is_pressed:
             running_pressed()
-            break
+            end_of_operation_led_blink()
 
 
 if __name__ == '__main__':
