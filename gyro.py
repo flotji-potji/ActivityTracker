@@ -80,8 +80,10 @@ def get_sensor_data():
 
 
 def store_sensor_data(data, label):
-    with open('/home/pi/ActivityTracker/data/sensor_data.csv', 'w') as outfile:
-        print('opening file?')
+    new_path = r'/home/pi/ActivityTracker/data/sensor_data.csv'
+    if not os.path.exists(new_path):
+        os.system(f'echo "" > {new_path}')
+    with open(new_path, 'a') as outfile:
         for row in data:
             for column in row:
                 print(f'{column},', file=outfile, end='')
