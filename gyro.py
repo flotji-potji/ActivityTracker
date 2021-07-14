@@ -80,45 +80,33 @@ def get_sensor_data():
 
 
 def store_sensor_data(data, label):
-    print('storing data...')
     with open('/home/pi/ActivityTracker/data/sensor_data.csv', 'w') as outfile:
         print('opening file?')
         for row in data:
             for column in row:
                 print(f'{column},', file=outfile, end='')
             print(label, file=outfile)
-    print('closed file?')
+            print('---------', file=outfile)
 
 
-def collect_data(time=10,frequency=100):
+def collect_data(time=5,frequency=100):
     res = []
-    print('collecting data...')
     for _ in range(time):
         for _ in range(frequency):
             res.append(get_sensor_data())
             sleep(1/frequency)
-    print('finished collecting data')
     return res
 
 
 def idle_pressed():
-    idle_led.on()
-    sleep(0.5)
-    idle_led.off()
     store_sensor_data(collect_data(), IDLE_STATE_LABEL)
 
 
 def walking_pressed():
-    walking_led.on()
-    sleep(0.5)
-    walking_led.off()
     store_sensor_data(collect_data(), WALKING_STATE_LABEL)
 
 
 def running_pressed():
-    running_led.on()
-    sleep(0.5)
-    running_led.off()
     store_sensor_data(collect_data(), RUNNING_STATE_LABEL)
 
 def startup_led_blink():
@@ -155,14 +143,26 @@ def main():
 
     while True:
         if idle_button.is_pressed:
+            idle_led.on()
+            sleep(0.5)
+            idle_led.off()
+            end_of_operation_led_blink()
             idle_pressed()
-            end_of_operation_led_blink()
+            startup_led_blink()
         elif walking_button.is_pressed:
+            walking_led.on()
+            sleep(0.5)
+            walking_led.off()
+            end_of_operation_led_blink()
             walking_pressed()
-            end_of_operation_led_blink()
+            startup_led_blink()
         elif running_button.is_pressed:
-            running_pressed()
+            running_led.on()
+            sleep(0.5)
+            running_led.off()
             end_of_operation_led_blink()
+            running_pressed()
+            startup_led_blink()
 
 
 if __name__ == '__main__':
