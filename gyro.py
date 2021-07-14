@@ -86,7 +86,7 @@ def store_sensor_data(data, label):
             for column in row:
                 print(f'{column},', file=outfile, end='')
             print(label, file=outfile)
-            print('---------', file=outfile)
+        print('---------', file=outfile)
 
 
 def collect_data(time=5,frequency=100):
