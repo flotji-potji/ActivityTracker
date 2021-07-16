@@ -47,7 +47,7 @@ def main():
         time.sleep(3)
 
         x = 0
-        while x < 30:
+        while x < 2:
 
             rndn = random.randint(0,1)  # randint and random needs to be changed to getting the recognized label by the MLA
             if rndn == 0:
@@ -61,7 +61,7 @@ def main():
                 lcd_string("Running", LCD_LINE_1)
             time.sleep(10)
             x = x + 1
-        break
+
 
 def display_state(state):
     # Initialise display
