@@ -6,8 +6,8 @@ from gyro import collect_data
 import numpy as np
 import time
 
-knn = load('knn_model.joblib')
-mlp = load('mlp_model.joblib')
+knn = load('/home/pi/ActivityTracker/knn_model.joblib')
+mlp = load('/home/pi/ActivityTracker/mlp_model.joblib')
 
 def detect_movement():
     X = np.array(collect_data())
