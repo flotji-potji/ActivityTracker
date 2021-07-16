@@ -59,7 +59,7 @@ def main():
             elif rndn == 2:
                 lcd_byte(0x01, LCD_CMD)
                 lcd_string("Running", LCD_LINE_1)
-            time.sleep(1)
+            time.sleep(10)
             x = x + 1
         break
 
@@ -78,7 +78,7 @@ def display_state(state):
     elif state == 2:
         lcd_byte(0x01, LCD_CMD)
         lcd_string("Running", LCD_LINE_1)
-    time.sleep(10)
+    time.sleep(5)
 
 def lcd_init():
     # Initialise display
