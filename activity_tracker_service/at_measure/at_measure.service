@@ -1,5 +1,5 @@
 [Unit]
-Description=Simple Activity Tracker Service
+Description=Simple Activity Tracker Measure Service
 
 [Service]
 Type=simple

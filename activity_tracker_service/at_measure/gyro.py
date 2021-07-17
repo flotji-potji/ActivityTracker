@@ -90,12 +90,12 @@ def store_sensor_data(data, label):
             print(label, file=outfile)
 
 
-def collect_data(time=5,frequency=100):
+def collect_data(time=5, frequency=100):
     res = []
     for _ in range(time):
         for _ in range(frequency):
             res.append(get_sensor_data())
-            sleep(1/frequency)
+            sleep(1 / frequency)
     return res
 
 
@@ -110,6 +110,7 @@ def walking_pressed():
 def running_pressed():
     store_sensor_data(collect_data(), RUNNING_STATE_LABEL)
 
+
 def startup_led_blink():
     idle_led.on()
     sleep(0.5)
@@ -121,6 +122,7 @@ def startup_led_blink():
     sleep(0.5)
     running_led.off()
 
+
 def end_of_operation_led_blink():
     running_led.on()
     sleep(0.5)
@@ -131,6 +133,7 @@ def end_of_operation_led_blink():
     idle_led.on()
     sleep(0.5)
     idle_led.off()
+
 
 def main():
     # activate module to communicate with it

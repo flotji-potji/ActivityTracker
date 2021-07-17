@@ -9,6 +9,7 @@ import time
 knn = load('/home/pi/ActivityTracker/knn_model.joblib')
 mlp = load('/home/pi/ActivityTracker/mlp_model.joblib')
 
+
 def detect_movement():
     X = np.array(collect_data())
     target_names = ['idle', 'walking', 'running']
@@ -31,8 +32,10 @@ def detect_movement():
     print("Sample counts per class MLP:\n",
           {n: v for n, v in zip(target_names, np.bincount(y_mlp))})
 
+
 def main():
     detect_movement()
+
 
 if __name__ == '__main__':
     main()

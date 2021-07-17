@@ -1,0 +1,9 @@
+[Unit]
+Description=Simple Activity Tracker Detection Service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/bin/detect_movement.py
+
+[Install]
+WantedBy=multi-user.target

@@ -35,7 +35,6 @@ GPIO.setup(LCD_D6, GPIO.OUT)  # DB6
 GPIO.setup(LCD_D7, GPIO.OUT)  # DB7
 
 
-
 def main():
     # Initialise display
     lcd_init()
@@ -49,7 +48,8 @@ def main():
         x = 0
         while x < 2:
 
-            rndn = random.randint(0,1)  # randint and random needs to be changed to getting the recognized label by the MLA
+            rndn = random.randint(0,
+                                  1)  # randint and random needs to be changed to getting the recognized label by the MLA
             if rndn == 0:
                 lcd_byte(0x01, LCD_CMD)
                 lcd_string("Idle", LCD_LINE_1)
@@ -79,6 +79,7 @@ def display_state(state):
         lcd_byte(0x01, LCD_CMD)
         lcd_string("Running", LCD_LINE_1)
     time.sleep(5)
+
 
 def lcd_init():
     # Initialise display
@@ -152,6 +153,7 @@ def lcd_string(message, line):
 
     for i in range(LCD_WIDTH):
         lcd_byte(ord(message[i]), LCD_CHR)
+
 
 if __name__ == '__main__':
 
